@@ -1,0 +1,21 @@
+@use '@/styles/variables.scss' as *;
+
+.tagSm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rpx 16rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  line-height: 1.4;
+}
+
+.tagMd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8rpx 20rpx;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  line-height: 1.4;
+}

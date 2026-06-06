@@ -1,0 +1,132 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  display: flex;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.99);
+  }
+}
+
+.image {
+  width: 220rpx;
+  height: 180rpx;
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-xs;
+}
+
+.name {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+  flex: 1;
+}
+
+.favorite {
+  padding: $spacing-xs;
+  margin-left: $spacing-xs;
+}
+
+.active {
+}
+
+.address {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  @include text-ellipsis;
+  margin-bottom: $spacing-sm;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+}
+
+.infoItem {
+  margin-right: $spacing-md;
+}
+
+.distance {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.availability {
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+}
+
+.available {
+  background: rgba(0, 180, 42, 0.1);
+  color: $color-success;
+}
+
+.unavailable {
+  background: rgba(134, 144, 156, 0.1);
+  color: $color-unavailable;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.tags {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.tag {
+  background: $color-bg-tag;
+  color: $color-primary;
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  margin-right: $spacing-xs;
+  flex-shrink: 0;
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  flex-shrink: 0;
+}
+
+.priceValue {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $color-price;
+}
+
+.priceUnit {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-left: 2rpx;
+}

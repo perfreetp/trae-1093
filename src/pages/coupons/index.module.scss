@@ -1,0 +1,138 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.tabs {
+  display: flex;
+  background: $color-bg-card;
+  padding: $spacing-sm $page-padding;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tab {
+  flex: 1;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  border-radius: $radius-button;
+  transition: all $transition-base;
+}
+
+.activeTab {
+  background: $color-primary-bg;
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.list {
+  padding: $spacing-md $page-padding;
+}
+
+.couponCard {
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  margin-bottom: $spacing-md;
+  display: flex;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+}
+
+.couponLeft {
+  width: 200rpx;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: $spacing-lg $spacing-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-white;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16rpx;
+    height: 16rpx;
+    border-radius: $radius-round;
+    background: $color-bg-page;
+  }
+}
+
+.couponValue {
+  font-size: 56rpx;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+}
+
+.couponUnit {
+  font-size: $font-size-sm;
+  margin-bottom: $spacing-xs;
+}
+
+.couponCondition {
+  font-size: $font-size-xs;
+  opacity: 0.8;
+}
+
+.couponRight {
+  flex: 1;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.couponName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.couponDesc {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-bottom: $spacing-md;
+}
+
+.couponBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.couponExpire {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.useBtn {
+  padding: $spacing-xs $spacing-md;
+  background: $color-primary;
+  color: $color-text-white;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+}
+
+.usedCoupon {
+  opacity: 0.6;
+
+  .couponLeft {
+    background: $color-text-tertiary;
+  }
+
+  .useBtn {
+    background: $color-text-disabled;
+  }
+}

@@ -1,0 +1,147 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 150rpx;
+}
+
+.tabs {
+  display: flex;
+  background: $color-bg-card;
+  padding: $spacing-sm $page-padding;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tab {
+  flex: 1;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  border-radius: $radius-button;
+  transition: all $transition-base;
+}
+
+.activeTab {
+  background: $color-primary-bg;
+  color: $color-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.list {
+  padding: $spacing-md $page-padding;
+}
+
+.feedbackItem {
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.feedbackHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+}
+
+.feedbackType {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.feedbackContent {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-sm;
+  line-height: 1.6;
+}
+
+.feedbackTime {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-bottom: $spacing-md;
+}
+
+.replyBox {
+  background: $color-bg-hover;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+}
+
+.replyLabel {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+  margin-bottom: $spacing-xs;
+}
+
+.replyContent {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.submitSection {
+  padding: $spacing-md $page-padding;
+}
+
+.typeSelector {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.typeBtn {
+  flex: 1;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx solid $color-border;
+  border-radius: $radius-lg;
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  transition: all $transition-base;
+}
+
+.typeBtnActive {
+  border-color: $color-primary;
+  background: $color-primary-bg;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 240rpx;
+  padding: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  border: 2rpx solid $color-border;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  box-sizing: border-box;
+  margin-bottom: $spacing-lg;
+}
+
+.submitBtn {
+  width: 100%;
+  height: 96rpx;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+}

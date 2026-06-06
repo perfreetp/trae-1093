@@ -1,0 +1,134 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 200rpx;
+}
+
+.amountSection {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: $spacing-xl * 2 $page-padding;
+  text-align: center;
+  color: $color-text-white;
+}
+
+.amountLabel {
+  font-size: $font-size-md;
+  opacity: 0.8;
+  margin-bottom: $spacing-sm;
+}
+
+.amountValue {
+  font-size: 80rpx;
+  font-weight: $font-weight-bold;
+}
+
+.orderInfo {
+  margin: -$spacing-lg $page-padding $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  padding: $spacing-sm 0;
+}
+
+.infoLabel {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.infoValue {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+}
+
+.payMethods {
+  margin: 0 $page-padding;
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+}
+
+.methodTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  padding: $spacing-lg;
+  border-bottom: 1rpx solid $color-divider;
+}
+
+.methodItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.methodIcon {
+  font-size: 48rpx;
+  margin-right: $spacing-md;
+}
+
+.methodText {
+  flex: 1;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+}
+
+.radio {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: $radius-round;
+  border: 4rpx solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radioActive {
+  border-color: $color-primary;
+  background: $color-primary;
+
+  &::after {
+    content: '';
+    width: 16rpx;
+    height: 16rpx;
+    border-radius: $radius-round;
+    background: $color-text-white;
+  }
+}
+
+.bottomBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $color-bg-card;
+  padding: $spacing-md $spacing-lg;
+  padding-bottom: $spacing-lg + env(safe-area-inset-bottom);
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.payBtn {
+  width: 100%;
+  height: 96rpx;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+}

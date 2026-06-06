@@ -1,0 +1,26 @@
+@use '@/styles/variables.scss' as *;
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md 0 $spacing-sm;
+}
+
+.title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.more {
+  display: flex;
+  align-items: center;
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.arrow {
+  margin-left: 4rpx;
+  font-size: $font-size-sm;
+}
