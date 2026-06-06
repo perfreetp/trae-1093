@@ -7,6 +7,7 @@ import EmptyState from '@/components/EmptyState'
 import { useAppStore } from '@/store'
 import type { ParkingOrder } from '@/types/order'
 import { formatDuration, formatPrice, formatPlateNumber } from '@/utils/format'
+import dayjs from 'dayjs'
 import styles from './index.module.scss'
 
 const tabs = [
@@ -88,6 +89,7 @@ const ArrearsPage: React.FC = () => {
   }
 
   const handleCouponSelect = () => {
+    const now = dayjs()
     const couponList: { coupon: typeof coupons[0]; disabled: boolean; reason: string }[] = []
 
     coupons.forEach(c => {
@@ -96,7 +98,7 @@ const ArrearsPage: React.FC = () => {
       if (c.status === 'used') {
         disabled = true
         reason = '已使用'
-      } else if (c.status === 'expired') {
+      } else if (c.status === 'expired' || dayjs(c.expireTime).isBefore(now, 'day')) {
         disabled = true
         reason = '已过期'
       } else if (c.minAmount > 0 && selectedTotal < c.minAmount) {

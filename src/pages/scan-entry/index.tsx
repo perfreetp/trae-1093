@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useMemo } from 'react'
 import { View, Text } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import { parkingLots } from '@/data/parking'
@@ -14,15 +14,45 @@ const ScanEntryPage: React.FC = () => {
   const vehicles = useAppStore(state => state.vehicles)
   const pendingScanRef = useRef(false)
 
-  const defaultVehicle = vehicles.find(v => v.isDefault) || vehicles[0]
-  const randomParking = parkingLots[Math.floor(Math.random() * parkingLots.filter(p => p.availableSpaces > 0).length)]
+  const availableParkings = useMemo(
+    () => parkingLots.filter(p => p.availableSpaces > 0),
+    []
+  )
+
+  const randomParking = useMemo(
+    () => availableParkings[Math.floor(Math.random() * availableParkings.length)],
+    [availableParkings]
+  )
+
+  const defaultVehicle = useMemo(
+    () => vehicles.find(v => v.isDefault) || vehicles[0],
+    [vehicles]
+  )
 
   useDidShow(() => {
     if (pendingScanRef.current && vehicles.length > 0) {
       pendingScanRef.current = false
-      handleMockScan()
+      const vehicle = vehicles.find(v => v.isDefault) || vehicles[0]
+      if (vehicle) {
+        doMockScan(vehicle)
+      }
     }
   })
+
+  const doMockScan = (vehicle: any) => {
+    Taro.showLoading({ title: '识别中...' })
+    setTimeout(() => {
+      Taro.hideLoading()
+      const entryTime = dayjs().format('YYYY-MM-DD HH:mm')
+      setScanResult({
+        parkingLot: randomParking,
+        plateNumber: vehicle?.plateNumber || '京A12345',
+        entryTime,
+        parkingPosition: `B${Math.floor(Math.random() * 3) + 1}-${['A', 'B', 'C', 'D'][Math.floor(Math.random() * 4)]}区-${String(Math.floor(Math.random() * 200) + 1).padStart(3, '0')}`
+      })
+      setScanned(true)
+    }, 1500)
+  }
 
   const handleMockScan = () => {
     if (vehicles.length === 0) {
@@ -39,18 +69,7 @@ const ScanEntryPage: React.FC = () => {
       })
       return
     }
-    Taro.showLoading({ title: '识别中...' })
-    setTimeout(() => {
-      Taro.hideLoading()
-      const entryTime = dayjs().format('YYYY-MM-DD HH:mm')
-      setScanResult({
-        parkingLot: randomParking,
-        plateNumber: defaultVehicle?.plateNumber || '京A12345',
-        entryTime,
-        parkingPosition: `B${Math.floor(Math.random() * 3) + 1}-${['A', 'B', 'C', 'D'][Math.floor(Math.random() * 4)]}区-${String(Math.floor(Math.random() * 200) + 1).padStart(3, '0')}`
-      })
-      setScanned(true)
-    }, 1500)
+    doMockScan(defaultVehicle)
   }
 
   const handleConfirm = () => {
@@ -77,12 +96,6 @@ const ScanEntryPage: React.FC = () => {
       Taro.switchTab({ url: '/pages/order/index' })
     }, 1500)
   }
-
-  useEffect(() => {
-    setTimeout(() => {
-      handleMockScan()
-    }, 500)
-  }, [])
 
   return (
     <View className={styles.page}>

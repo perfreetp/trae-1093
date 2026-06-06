@@ -64,6 +64,7 @@ const ParkingSettlePage: React.FC = () => {
   }, [totalAmount, discountAmount])
 
   const handleCouponSelect = () => {
+    const now = dayjs()
     const couponList: { coupon: typeof coupons[0]; disabled: boolean; reason: string }[] = []
 
     coupons.forEach(c => {
@@ -72,7 +73,7 @@ const ParkingSettlePage: React.FC = () => {
       if (c.status === 'used') {
         disabled = true
         reason = '已使用'
-      } else if (c.status === 'expired') {
+      } else if (c.status === 'expired' || dayjs(c.expireTime).isBefore(now, 'day')) {
         disabled = true
         reason = '已过期'
       } else if (c.minAmount > 0 && totalAmount < c.minAmount) {
@@ -131,10 +132,9 @@ const ParkingSettlePage: React.FC = () => {
       invoiceStatus: 'none'
     })
 
-    Taro.showToast({ title: '支付成功', icon: 'success' })
-    setTimeout(() => {
-      Taro.switchTab({ url: '/pages/order/index' })
-    }, 1500)
+    Taro.redirectTo({
+      url: `/pages/payment-result/index?orderId=${order.id}`
+    })
   }
 
   if (!order) {

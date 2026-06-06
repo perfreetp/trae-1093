@@ -195,6 +195,7 @@
   display: flex;
   align-items: baseline;
   gap: $spacing-xs;
+  flex-wrap: wrap;
 }
 
 .orderPrice {
@@ -203,9 +204,29 @@
   color: $color-price;
 }
 
+.priceDetails {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.originalPrice {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  text-decoration: line-through;
+}
+
 .discountTip {
   font-size: $font-size-xs;
   color: $color-success;
+}
+
+.payHint {
+  font-size: $font-size-xs;
+  color: $color-warning;
+  padding: 2rpx 12rpx;
+  background: rgba(255, 125, 0, 0.1);
+  border-radius: $radius-sm;
 }
 
 .rightActions {

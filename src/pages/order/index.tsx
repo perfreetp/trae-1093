@@ -191,9 +191,21 @@ const OrderPage: React.FC = () => {
               </View>
               <View className={styles.orderFooter}>
                 <View className={styles.priceInfo}>
-                  <Text className={styles.orderPrice}>{formatPrice(order.totalAmount)}</Text>
-                  {order.discountAmount && order.discountAmount > 0 && (
-                    <Text className={styles.discountTip}>优惠{formatPrice(order.discountAmount)}</Text>
+                  {order.status === 'completed' ? (
+                    <>
+                      <Text className={styles.orderPrice}>{formatPrice(order.paidAmount)}</Text>
+                      {order.discountAmount && order.discountAmount > 0 && (
+                        <View className={styles.priceDetails}>
+                          <Text className={styles.originalPrice}>{formatPrice(order.totalAmount)}</Text>
+                          <Text className={styles.discountTip}>优惠{formatPrice(order.discountAmount)}</Text>
+                        </View>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <Text className={styles.orderPrice}>{formatPrice(order.totalAmount - order.paidAmount)}</Text>
+                      <Text className={styles.payHint}>待支付</Text>
+                    </>
                   )}
                 </View>
                 <View className={styles.rightActions}>

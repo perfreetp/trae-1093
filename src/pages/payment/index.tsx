@@ -4,6 +4,7 @@ import Taro, { useRouter } from '@tarojs/taro'
 import classnames from 'classnames'
 import { formatPrice, formatDuration, formatPlateNumber } from '@/utils/format'
 import { useAppStore } from '@/store'
+import dayjs from 'dayjs'
 import styles from './index.module.scss'
 
 const payMethods = [
@@ -54,7 +55,7 @@ const PaymentPage: React.FC = () => {
   }, [payableAmount, discountAmount])
 
   const handleCouponSelect = () => {
-    const allCoupons = coupons.filter(c => c.status !== 'available' ? true : true)
+    const now = dayjs()
     const couponList: { coupon: typeof coupons[0]; disabled: boolean; reason: string }[] = []
 
     coupons.forEach(c => {
@@ -63,7 +64,7 @@ const PaymentPage: React.FC = () => {
       if (c.status === 'used') {
         disabled = true
         reason = '已使用'
-      } else if (c.status === 'expired') {
+      } else if (c.status === 'expired' || dayjs(c.expireTime).isBefore(now, 'day')) {
         disabled = true
         reason = '已过期'
       } else if (c.minAmount > 0 && payableAmount < c.minAmount) {
