@@ -20,7 +20,9 @@ export default defineAppConfig({
     'pages/navigation/index',
     'pages/vehicle-edit/index',
     'pages/invoice-edit/index',
-    'pages/parking-settle/index'
+    'pages/parking-settle/index',
+    'pages/payment-result/index',
+    'pages/invoice-apply/index'
   ],
   window: {
     backgroundTextStyle: 'light',

@@ -233,3 +233,110 @@
 .orderCard {
   position: relative;
 }
+
+.couponRow {
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+  color: #1677FF;
+  gap: 8rpx;
+}
+
+.couponLabel {
+  color: #4E5969;
+}
+
+.couponValue {
+  color: #FF4D4F;
+  font-weight: 500;
+}
+
+.couponPlaceholder {
+  color: #86909C;
+}
+
+.couponArrow {
+  font-size: 28rpx;
+  color: #86909C;
+}
+
+.discountHint {
+  font-size: 22rpx;
+  color: #00B42A;
+  margin-left: 8rpx;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalContent {
+  width: 600rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.modalTitle {
+  padding: 32rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1D2129;
+  border-bottom: 1rpx solid #F2F3F5;
+}
+
+.modalBody {
+  padding: 32rpx;
+}
+
+.modalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  font-size: 28rpx;
+  color: #4E5969;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.modalPrice {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #FF4D4F;
+}
+
+.modalActions {
+  display: flex;
+  border-top: 1rpx solid #F2F3F5;
+}
+
+.modalCancel,
+.modalConfirm {
+  flex: 1;
+  padding: 28rpx;
+  text-align: center;
+  font-size: 30rpx;
+}
+
+.modalCancel {
+  color: #4E5969;
+  border-right: 1rpx solid #F2F3F5;
+}
+
+.modalConfirm {
+  color: #1677FF;
+  font-weight: 500;
+}

@@ -1,0 +1,190 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 180rpx;
+}
+
+.content {
+  padding: $spacing-md $page-padding;
+}
+
+.empty {
+  text-align: center;
+  padding: 120rpx;
+  color: $color-text-tertiary;
+}
+
+.section {
+  margin-bottom: $spacing-lg;
+}
+
+.sectionTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.card {
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.orderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+
+  &:not(:last-child) {
+    border-bottom: 1rpx solid $color-divider;
+  }
+}
+
+.orderLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.orderValue {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.divider {
+  height: 1rpx;
+  background: $color-divider;
+  margin: $spacing-sm 0;
+}
+
+.priceValue {
+  font-size: $font-size-lg;
+  color: $color-price;
+  font-weight: $font-weight-bold;
+}
+
+.selectInvoice {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md 0;
+}
+
+.selectIcon {
+  font-size: 40rpx;
+  margin-right: $spacing-sm;
+}
+
+.selectText {
+  flex: 1;
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.selectArrow {
+  font-size: $font-size-lg;
+  color: $color-text-tertiary;
+}
+
+.invoiceInfo {
+  padding: $spacing-sm 0;
+}
+
+.invoiceType {
+  display: inline-block;
+  padding: $spacing-xs $spacing-sm;
+  background: $color-primary-bg;
+  color: $color-primary;
+  font-size: $font-size-xs;
+  border-radius: $radius-sm;
+  margin-bottom: $spacing-sm;
+}
+
+.invoiceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+}
+
+.invoiceLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.invoiceValue {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.changeInvoice {
+  text-align: center;
+  margin-top: $spacing-sm;
+  font-size: $font-size-sm;
+  color: $color-primary;
+}
+
+.dividerText {
+  margin: 0 $spacing-sm;
+  color: $color-divider;
+}
+
+.tips {
+  padding: $spacing-md;
+  background: $color-bg-hover;
+  border-radius: $radius-lg;
+}
+
+.tipItem {
+  display: block;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.8;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+
+.amountBox {
+  flex: 1;
+}
+
+.amountLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.amountValue {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-price;
+}
+
+.submitBtn {
+  flex: 1.5;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+}

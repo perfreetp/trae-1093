@@ -45,6 +45,22 @@ const OrderPage: React.FC = () => {
     })
   }
 
+  const getInvoiceStatusText = (status?: string) => {
+    const map: Record<string, string> = {
+      none: '',
+      applied: '已申请开票',
+      issued: '已开票'
+    }
+    return map[status || 'none'] || ''
+  }
+
+  const handleApplyInvoice = (order: ParkingOrder, e: React.MouseEvent) => {
+    e.stopPropagation()
+    Taro.navigateTo({
+      url: `/pages/invoice-apply/index?orderId=${order.id}`
+    })
+  }
+
   const handleFindCar = () => {
     Taro.navigateTo({ url: '/pages/find-car/index' })
   }
@@ -174,18 +190,38 @@ const OrderPage: React.FC = () => {
                 </View>
               </View>
               <View className={styles.orderFooter}>
-                <Text className={styles.orderPrice}>{formatPrice(order.totalAmount)}</Text>
-                {(order.status === 'pending_payment' || order.status === 'overdue') && (
-                  <View
-                    className={styles.payBtn}
-                    onClick={e => {
-                      e.stopPropagation()
-                      handlePay(order)
-                    }}
-                  >
-                    去支付
-                  </View>
-                )}
+                <View className={styles.priceInfo}>
+                  <Text className={styles.orderPrice}>{formatPrice(order.totalAmount)}</Text>
+                  {order.discountAmount && order.discountAmount > 0 && (
+                    <Text className={styles.discountTip}>优惠{formatPrice(order.discountAmount)}</Text>
+                  )}
+                </View>
+                <View className={styles.rightActions}>
+                  {getInvoiceStatusText(order.invoiceStatus) && (
+                    <Text className={styles.invoiceTag}>
+                      {getInvoiceStatusText(order.invoiceStatus)}
+                    </Text>
+                  )}
+                  {order.status === 'completed' && !order.invoiceStatus && (
+                    <View
+                      className={styles.invoiceBtn}
+                      onClick={e => handleApplyInvoice(order, e)}
+                    >
+                      开发票
+                    </View>
+                  )}
+                  {(order.status === 'pending_payment' || order.status === 'overdue') && (
+                    <View
+                      className={styles.payBtn}
+                      onClick={e => {
+                        e.stopPropagation()
+                        handlePay(order)
+                      }}
+                    >
+                      去支付
+                    </View>
+                  )}
+                </View>
               </View>
             </View>
           ))

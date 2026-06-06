@@ -191,10 +191,27 @@
   border-top: 1rpx solid $color-divider;
 }
 
+.priceInfo {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-xs;
+}
+
 .orderPrice {
   font-size: $font-size-lg;
   font-weight: $font-weight-bold;
   color: $color-price;
+}
+
+.discountTip {
+  font-size: $font-size-xs;
+  color: $color-success;
+}
+
+.rightActions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
 }
 
 .payBtn {
@@ -204,4 +221,21 @@
   border-radius: $radius-button;
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
+}
+
+.invoiceBtn {
+  padding: $spacing-sm $spacing-md;
+  background: $color-primary-bg;
+  color: $color-primary;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.invoiceTag {
+  padding: $spacing-xs $spacing-sm;
+  background: $color-bg-hover;
+  color: $color-text-secondary;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
 }

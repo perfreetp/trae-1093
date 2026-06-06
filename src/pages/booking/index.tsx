@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useRef } from 'react'
 import { View, Text, ScrollView } from '@tarojs/components'
-import Taro, { useRouter } from '@tarojs/taro'
+import Taro, { useRouter, useDidShow } from '@tarojs/taro'
 import classnames from 'classnames'
 import StatusTag from '@/components/StatusTag'
 import EmptyState from '@/components/EmptyState'
@@ -20,17 +20,12 @@ const BookingPage: React.FC = () => {
   const router = useRouter()
   const { parkingId, tab } = router.params
   const [activeTab, setActiveTab] = useState(tab || 'new')
-
-  React.useEffect(() => {
-    if (tab) {
-      setActiveTab(tab)
-    }
-  }, [tab])
   const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'))
   const [selectedStartSlot, setSelectedStartSlot] = useState<string | null>(null)
   const [selectedEndSlot, setSelectedEndSlot] = useState<string | null>(null)
   const [selectedParkingId, setSelectedParkingId] = useState<string | null>(parkingId || null)
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null)
+  const pendingVehicleRef = useRef(false)
   const { bookings, vehicles, cancelBooking } = useAppStore()
 
   const timeSlots = useMemo(() => generateTimeSlots(selectedDate), [selectedDate])
@@ -39,11 +34,27 @@ const BookingPage: React.FC = () => {
   const selectedVehicle = vehicles.find(v => v.id === selectedVehicleId) || defaultVehicle
   const availableParkings = parkingLots.filter(p => p.availableSpaces > 0)
 
-  useEffect(() => {
+  React.useEffect(() => {
+    if (tab) {
+      setActiveTab(tab)
+    }
+  }, [tab])
+
+  React.useEffect(() => {
     if (defaultVehicle && !selectedVehicleId) {
       setSelectedVehicleId(defaultVehicle.id)
     }
   }, [defaultVehicle, selectedVehicleId])
+
+  useDidShow(() => {
+    if (pendingVehicleRef.current && vehicles.length > 0) {
+      pendingVehicleRef.current = false
+      const newDefault = vehicles.find(v => v.isDefault) || vehicles[0]
+      if (newDefault) {
+        setSelectedVehicleId(newDefault.id)
+      }
+    }
+  })
 
   const getEndSlotOptions = () => {
     if (!selectedStartSlot) return []
@@ -114,6 +125,7 @@ const BookingPage: React.FC = () => {
         confirmText: '去添加',
         success: res => {
           if (res.confirm) {
+            pendingVehicleRef.current = true
             Taro.navigateTo({ url: '/pages/vehicle-edit/index' })
           }
         }

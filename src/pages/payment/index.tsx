@@ -17,7 +17,7 @@ const PaymentPage: React.FC = () => {
   const { orderId } = router.params
   const [selectedMethod, setSelectedMethod] = useState('wechat')
   const [selectedCouponId, setSelectedCouponId] = useState<string | null>(null)
-  const { orders, updateOrderStatus, coupons, useCoupon } = useAppStore()
+  const { orders, updateOrderStatus, updateOrder, coupons, useCoupon } = useAppStore()
 
   const order = useMemo(() => {
     if (orderId) {
@@ -54,19 +54,51 @@ const PaymentPage: React.FC = () => {
   }, [payableAmount, discountAmount])
 
   const handleCouponSelect = () => {
-    if (availableCoupons.length === 0) {
-      Taro.showToast({ title: '暂无可用优惠券', icon: 'none' })
+    const allCoupons = coupons.filter(c => c.status !== 'available' ? true : true)
+    const couponList: { coupon: typeof coupons[0]; disabled: boolean; reason: string }[] = []
+
+    coupons.forEach(c => {
+      let disabled = false
+      let reason = ''
+      if (c.status === 'used') {
+        disabled = true
+        reason = '已使用'
+      } else if (c.status === 'expired') {
+        disabled = true
+        reason = '已过期'
+      } else if (c.minAmount > 0 && payableAmount < c.minAmount) {
+        disabled = true
+        reason = `满¥${c.minAmount.toFixed(2)}可用`
+      }
+      couponList.push({ coupon: c, disabled, reason })
+    })
+
+    if (couponList.length === 0) {
+      Taro.showToast({ title: '暂无优惠券', icon: 'none' })
       return
     }
+
     Taro.showActionSheet({
-      itemList: availableCoupons.map(c => {
+      itemList: couponList.map(item => {
+        const c = item.coupon
+        let valueText = ''
         if (c.type === 'amount') {
-          return `${c.name} - 减¥${c.value}`
+          valueText = `减¥${c.value}`
+        } else {
+          valueText = `${c.value * 10}折`
         }
-        return `${c.name} - ${c.value * 10}折`
+        if (item.disabled) {
+          return `${c.name} - ${valueText}（${item.reason}）`
+        }
+        return `${c.name} - ${valueText}`
       }),
       success: res => {
-        setSelectedCouponId(availableCoupons[res.tapIndex].id)
+        const selected = couponList[res.tapIndex]
+        if (selected.disabled) {
+          Taro.showToast({ title: selected.reason, icon: 'none' })
+          return
+        }
+        setSelectedCouponId(selected.coupon.id)
       }
     })
   }
@@ -81,11 +113,17 @@ const PaymentPage: React.FC = () => {
     Taro.showLoading({ title: '支付中...' })
     setTimeout(() => {
       Taro.hideLoading()
-      updateOrderStatus(order.id, 'completed')
-      Taro.showToast({ title: '支付成功', icon: 'success' })
-      setTimeout(() => {
-        Taro.navigateBack()
-      }, 1500)
+      updateOrder(order.id, {
+        ...order,
+        discountAmount,
+        paidAmount: actualPayAmount,
+        couponId: selectedCoupon?.id,
+        status: 'completed',
+        invoiceStatus: 'none'
+      })
+      Taro.navigateTo({
+        url: `/pages/payment-result/index?orderId=${order.id}`
+      })
     }, 1500)
   }
 

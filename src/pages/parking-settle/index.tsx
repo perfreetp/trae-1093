@@ -3,7 +3,7 @@ import { View, Text, ScrollView } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import classnames from 'classnames'
 import { useAppStore } from '@/store'
-import { formatPrice, formatDuration, formatPlateNumber } from '@/utils/format'
+import { formatPrice, formatDuration, formatPlateNumber, formatHoursToDuration } from '@/utils/format'
 import dayjs from 'dayjs'
 import styles from './index.module.scss'
 
@@ -21,7 +21,7 @@ const ParkingSettlePage: React.FC = () => {
     if (!order) return 0
     const entry = dayjs(order.entryTime)
     const exit = dayjs()
-    return Math.max(exit.diff(entry, 'hour', true), 0.5)
+    return Math.max(exit.diff(entry, 'minute'), 30)
   }, [order])
 
   const parkingLotPrice = useMemo(() => {
@@ -34,7 +34,8 @@ const ParkingSettlePage: React.FC = () => {
   }, [order])
 
   const totalAmount = useMemo(() => {
-    return Math.ceil(calculatedDuration * parkingLotPrice * 100) / 100
+    const hours = calculatedDuration / 60
+    return Math.ceil(hours * parkingLotPrice * 100) / 100
   }, [calculatedDuration, parkingLotPrice])
 
   const selectedCoupon = useMemo(
@@ -63,19 +64,50 @@ const ParkingSettlePage: React.FC = () => {
   }, [totalAmount, discountAmount])
 
   const handleCouponSelect = () => {
-    if (availableCoupons.length === 0) {
-      Taro.showToast({ title: '暂无可用优惠券', icon: 'none' })
+    const couponList: { coupon: typeof coupons[0]; disabled: boolean; reason: string }[] = []
+
+    coupons.forEach(c => {
+      let disabled = false
+      let reason = ''
+      if (c.status === 'used') {
+        disabled = true
+        reason = '已使用'
+      } else if (c.status === 'expired') {
+        disabled = true
+        reason = '已过期'
+      } else if (c.minAmount > 0 && totalAmount < c.minAmount) {
+        disabled = true
+        reason = `满¥${c.minAmount.toFixed(2)}可用`
+      }
+      couponList.push({ coupon: c, disabled, reason })
+    })
+
+    if (couponList.length === 0) {
+      Taro.showToast({ title: '暂无优惠券', icon: 'none' })
       return
     }
+
     Taro.showActionSheet({
-      itemList: availableCoupons.map(c => {
+      itemList: couponList.map(item => {
+        const c = item.coupon
+        let valueText = ''
         if (c.type === 'amount') {
-          return `${c.name} - 减¥${c.value}`
+          valueText = `减¥${c.value}`
+        } else {
+          valueText = `${c.value * 10}折`
         }
-        return `${c.name} - ${c.value * 10}折`
+        if (item.disabled) {
+          return `${c.name} - ${valueText}（${item.reason}）`
+        }
+        return `${c.name} - ${valueText}`
       }),
       success: res => {
-        setSelectedCouponId(availableCoupons[res.tapIndex].id)
+        const selected = couponList[res.tapIndex]
+        if (selected.disabled) {
+          Taro.showToast({ title: selected.reason, icon: 'none' })
+          return
+        }
+        setSelectedCouponId(selected.coupon.id)
       }
     })
   }
@@ -92,8 +124,11 @@ const ParkingSettlePage: React.FC = () => {
       exitTime,
       duration: calculatedDuration,
       totalAmount,
+      discountAmount,
       paidAmount: payableAmount,
-      status: 'completed'
+      couponId: selectedCoupon?.id,
+      status: 'completed',
+      invoiceStatus: 'none'
     })
 
     Taro.showToast({ title: '支付成功', icon: 'success' })

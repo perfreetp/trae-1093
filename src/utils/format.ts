@@ -10,15 +10,23 @@ export const formatPrice = (price: number): string => {
 }
 
 export const formatDuration = (minutes: number): string => {
-  if (minutes < 60) {
-    return `${minutes}分钟`
+  if (!minutes && minutes !== 0) return '--'
+  const totalMins = Math.ceil(minutes)
+  if (totalMins < 60) {
+    return `${totalMins}分钟`
   }
-  const hours = Math.floor(minutes / 60)
-  const mins = minutes % 60
+  const hours = Math.floor(totalMins / 60)
+  const mins = totalMins % 60
   if (mins === 0) {
     return `${hours}小时`
   }
   return `${hours}小时${mins}分钟`
+}
+
+export const formatHoursToDuration = (hours: number): string => {
+  if (!hours && hours !== 0) return '--'
+  const totalMins = Math.ceil(hours * 60)
+  return formatDuration(totalMins)
 }
 
 export const formatPlateNumber = (plate: string): string => {

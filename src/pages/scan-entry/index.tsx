@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import { View, Text } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import { parkingLots } from '@/data/parking'
 import { useAppStore } from '@/store'
 import { formatPlateNumber } from '@/utils/format'
@@ -12,9 +12,17 @@ const ScanEntryPage: React.FC = () => {
   const [scanResult, setScanResult] = useState<any>(null)
   const addOrder = useAppStore(state => state.addOrder)
   const vehicles = useAppStore(state => state.vehicles)
+  const pendingScanRef = useRef(false)
 
   const defaultVehicle = vehicles.find(v => v.isDefault) || vehicles[0]
   const randomParking = parkingLots[Math.floor(Math.random() * parkingLots.filter(p => p.availableSpaces > 0).length)]
+
+  useDidShow(() => {
+    if (pendingScanRef.current && vehicles.length > 0) {
+      pendingScanRef.current = false
+      handleMockScan()
+    }
+  })
 
   const handleMockScan = () => {
     if (vehicles.length === 0) {
@@ -24,6 +32,7 @@ const ScanEntryPage: React.FC = () => {
         confirmText: '去添加',
         success: res => {
           if (res.confirm) {
+            pendingScanRef.current = true
             Taro.navigateTo({ url: '/pages/vehicle-edit/index' })
           }
         }

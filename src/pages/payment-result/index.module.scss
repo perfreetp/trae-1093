@@ -1,0 +1,139 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 100rpx;
+}
+
+.empty {
+  text-align: center;
+  padding: 120rpx;
+  color: $color-text-tertiary;
+}
+
+.successHeader {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: 80rpx $page-padding 100rpx;
+  text-align: center;
+  color: $color-text-white;
+}
+
+.successIcon {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 0 auto $spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60rpx;
+  font-weight: bold;
+}
+
+.successTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-sm;
+}
+
+.successPrice {
+  font-size: 56rpx;
+  font-weight: $font-weight-bold;
+}
+
+.orderInfo {
+  padding: 0 $page-padding;
+  margin-top: -60rpx;
+}
+
+.infoCard {
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-sm 0;
+
+  &:not(:last-child) {
+    border-bottom: 1rpx solid $color-divider;
+  }
+}
+
+.infoLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.couponName {
+  font-size: $font-size-xs;
+  color: $color-primary;
+  margin-left: $spacing-xs;
+}
+
+.discountValue {
+  font-size: $font-size-sm;
+  color: $color-success;
+  font-weight: $font-weight-medium;
+}
+
+.divider {
+  height: 1rpx;
+  background: $color-divider;
+  margin: $spacing-sm 0;
+}
+
+.priceValue {
+  font-size: $font-size-lg;
+  color: $color-price;
+  font-weight: $font-weight-bold;
+}
+
+.actions {
+  padding: $spacing-xl $page-padding $spacing-md;
+  display: flex;
+  gap: $spacing-md;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  flex: 1;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+}
+
+.primaryBtn {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+}
+
+.secondaryBtn {
+  background: $color-bg-hover;
+  color: $color-text-primary;
+  border: 2rpx solid $color-divider;
+}
+
+.backHome {
+  text-align: center;
+  color: $color-text-tertiary;
+  font-size: $font-size-sm;
+  padding: $spacing-md;
+}
