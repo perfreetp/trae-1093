@@ -40,6 +40,12 @@ const NavigationPage: React.FC = () => {
         <View className={styles.routeLine}>
           <View className={styles.routePath} />
         </View>
+        {isNavigating && (
+          <View className={styles.navStatusBar}>
+            <View className={styles.navDot} />
+            <Text className={styles.navStatusText}>正在前往：{parking.entranceAddress}</Text>
+          </View>
+        )}
       </View>
 
       <View className={styles.infoCard}>
@@ -47,6 +53,10 @@ const NavigationPage: React.FC = () => {
         <View className={styles.parkingAddress}>
           <Text>📍</Text>
           <Text>{parking.address}</Text>
+        </View>
+        <View className={styles.entranceInfo}>
+          <Text className={styles.entranceLabel}>入口地址</Text>
+          <Text className={styles.entranceText}>{parking.entranceAddress}</Text>
         </View>
 
         <View className={styles.routeInfo}>
@@ -69,7 +79,7 @@ const NavigationPage: React.FC = () => {
             <Text>💡</Text>
             温馨提示
           </Text>
-          <Text className={styles.tipsItem}>• 停车场入口位于东侧，请沿建国路行驶</Text>
+          <Text className={styles.tipsItem}>• 请按导航路线前往入口，注意行车安全</Text>
           <Text className={styles.tipsItem}>• 剩余车位 {parking.availableSpaces} 个，入场前可先预约</Text>
           <Text className={styles.tipsItem}>• 支持无感支付，离场无需扫码</Text>
         </View>

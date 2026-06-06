@@ -24,6 +24,13 @@
   font-weight: $font-weight-bold;
 }
 
+.amountDiscount {
+  font-size: $font-size-sm;
+  opacity: 0.9;
+  margin-top: $spacing-xs;
+  display: block;
+}
+
 .orderInfo {
   margin: -$spacing-lg $page-padding $spacing-md;
   background: $color-bg-card;
@@ -46,6 +53,50 @@
 .infoValue {
   font-size: $font-size-md;
   color: $color-text-primary;
+}
+
+.couponSection {
+  margin: 0 $page-padding $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-card;
+}
+
+.couponRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-lg;
+}
+
+.couponLabel {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.couponRight {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.couponPlaceholder {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+}
+
+.couponSelected {
+  font-size: $font-size-md;
+  color: $color-price;
+  font-weight: $font-weight-semibold;
+}
+
+.couponArrow {
+  font-size: $font-size-lg;
+  color: $color-text-tertiary;
 }
 
 .payMethods {

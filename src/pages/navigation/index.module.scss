@@ -95,10 +95,31 @@
 .parkingAddress {
   font-size: 26rpx;
   color: #86909C;
-  margin-bottom: 24rpx;
+  margin-bottom: 16rpx;
   display: flex;
   align-items: center;
   gap: 8rpx;
+}
+
+.entranceInfo {
+  background: #FFF7E8;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  margin-bottom: 24rpx;
+}
+
+.entranceLabel {
+  font-size: 24rpx;
+  color: #FF7D00;
+  font-weight: 500;
+  margin-bottom: 4rpx;
+  display: block;
+}
+
+.entranceText {
+  font-size: 26rpx;
+  color: #1D2129;
+  font-weight: 500;
 }
 
 .routeInfo {
@@ -210,4 +231,28 @@
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+.navStatusBar {
+  position: absolute;
+  top: 24rpx;
+  left: 24rpx;
+  right: 24rpx;
+  background: rgba(0, 180, 42, 0.95);
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  z-index: 10;
+}
+
+.navStatusText {
+  color: #fff;
+  font-size: 26rpx;
+  font-weight: 500;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

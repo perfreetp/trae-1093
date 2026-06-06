@@ -26,7 +26,7 @@ const ParkingDetailPage: React.FC = () => {
 
   const handleBooking = () => {
     Taro.navigateTo({
-      url: `/pages/booking-confirm/index?parkingId=${parking.id}`
+      url: `/pages/booking/index?parkingId=${parking.id}`
     })
   }
 

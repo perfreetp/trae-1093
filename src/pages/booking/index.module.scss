@@ -53,7 +53,7 @@
   margin-bottom: $spacing-md;
 }
 
-.dateSelector {
+.selector {
   display: flex;
   align-items: center;
   margin-bottom: $spacing-lg;
@@ -62,28 +62,70 @@
   border-radius: $radius-lg;
 }
 
-.dateIcon {
+.selectorIcon {
   font-size: 36rpx;
   margin-right: $spacing-sm;
 }
 
-.dateText {
+.selectorText {
   flex: 1;
   font-size: $font-size-md;
   color: $color-text-primary;
 }
 
-.dateArrow {
+.selectorArrow {
   color: $color-text-tertiary;
   font-size: $font-size-md;
 }
 
-.selectedParkingInfo {
+.selectedInfo {
   font-size: $font-size-sm;
   color: $color-text-secondary;
   margin-top: -$spacing-md;
   margin-bottom: $spacing-lg;
   padding-left: $spacing-sm;
+}
+
+.summaryCard {
+  background: $color-primary-bg;
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.summaryTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xs;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.summaryLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.summaryValue {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.summaryPrice {
+  font-size: $font-size-lg;
+  color: $color-price;
+  font-weight: $font-weight-bold;
 }
 
 .timeSlots {

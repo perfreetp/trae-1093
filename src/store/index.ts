@@ -18,6 +18,7 @@ interface AppState {
 
   setOrders: (orders: ParkingOrder[]) => void
   addOrder: (order: ParkingOrder) => void
+  updateOrder: (orderId: string, order: Partial<ParkingOrder>) => void
   updateOrderStatus: (orderId: string, status: ParkingOrder['status']) => void
 
   setBookings: (bookings: Booking[]) => void
@@ -95,6 +96,9 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setOrders: (orders) => set({ orders }),
   addOrder: (order) => set((state) => ({ orders: [order, ...state.orders] })),
+  updateOrder: (orderId, order) => set((state) => ({
+    orders: state.orders.map(o => o.id === orderId ? { ...o, ...order } : o)
+  })),
   updateOrderStatus: (orderId, status) => set((state) => ({
     orders: state.orders.map(o => o.id === orderId ? { ...o, status, paidAmount: status === 'completed' ? o.totalAmount : o.paidAmount } : o)
   })),
@@ -125,9 +129,14 @@ export const useAppStore = create<AppState>((set, get) => ({
       return v
     })
   })),
-  deleteVehicle: (vehicleId) => set((state) => ({
-    vehicles: state.vehicles.filter(v => v.id !== vehicleId)
-  })),
+  deleteVehicle: (vehicleId) => set((state) => {
+    const remaining = state.vehicles.filter(v => v.id !== vehicleId)
+    const deletedDefault = state.vehicles.find(v => v.id === vehicleId)?.isDefault
+    if (deletedDefault && remaining.length > 0) {
+      remaining[0].isDefault = true
+    }
+    return { vehicles: remaining }
+  }),
   setDefaultVehicle: (vehicleId) => set((state) => ({
     vehicles: state.vehicles.map(v => ({ ...v, isDefault: v.id === vehicleId }))
   })),

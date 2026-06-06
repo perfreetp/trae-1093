@@ -19,7 +19,8 @@ export default defineAppConfig({
     'pages/scan-entry/index',
     'pages/navigation/index',
     'pages/vehicle-edit/index',
-    'pages/invoice-edit/index'
+    'pages/invoice-edit/index',
+    'pages/parking-settle/index'
   ],
   window: {
     backgroundTextStyle: 'light',

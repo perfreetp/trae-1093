@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { View, Text, ScrollView } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useRouter } from '@tarojs/taro'
 import classnames from 'classnames'
 import StatusTag from '@/components/StatusTag'
 import EmptyState from '@/components/EmptyState'
@@ -17,16 +17,54 @@ const tabs = [
 ]
 
 const BookingPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('new')
+  const router = useRouter()
+  const { parkingId, tab } = router.params
+  const [activeTab, setActiveTab] = useState(tab || 'new')
+
+  React.useEffect(() => {
+    if (tab) {
+      setActiveTab(tab)
+    }
+  }, [tab])
   const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'))
-  const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
-  const [selectedParkingId, setSelectedParkingId] = useState<string | null>(null)
+  const [selectedStartSlot, setSelectedStartSlot] = useState<string | null>(null)
+  const [selectedEndSlot, setSelectedEndSlot] = useState<string | null>(null)
+  const [selectedParkingId, setSelectedParkingId] = useState<string | null>(parkingId || null)
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null)
   const { bookings, vehicles, cancelBooking } = useAppStore()
 
   const timeSlots = useMemo(() => generateTimeSlots(selectedDate), [selectedDate])
-  const defaultVehicle = vehicles.find(v => v.isDefault) || vehicles[0]
+  const defaultVehicle = vehicles.find(v => v.isDefault)
   const selectedParking = parkingLots.find(p => p.id === selectedParkingId)
+  const selectedVehicle = vehicles.find(v => v.id === selectedVehicleId) || defaultVehicle
   const availableParkings = parkingLots.filter(p => p.availableSpaces > 0)
+
+  useEffect(() => {
+    if (defaultVehicle && !selectedVehicleId) {
+      setSelectedVehicleId(defaultVehicle.id)
+    }
+  }, [defaultVehicle, selectedVehicleId])
+
+  const getEndSlotOptions = () => {
+    if (!selectedStartSlot) return []
+    const startIndex = timeSlots.findIndex(s => s.start === selectedStartSlot)
+    return timeSlots.slice(startIndex + 1)
+  }
+
+  const endSlotOptions = getEndSlotOptions()
+
+  const calculateDuration = () => {
+    if (!selectedStartSlot || !selectedEndSlot) return 0
+    const start = dayjs(`${selectedDate} ${selectedStartSlot}`)
+    const end = dayjs(`${selectedDate} ${selectedEndSlot}`)
+    return end.diff(start, 'hour', true)
+  }
+
+  const calculatePrice = () => {
+    const duration = calculateDuration()
+    if (!selectedParking || duration <= 0) return 0
+    return Math.ceil(duration * selectedParking.pricePerHour * 100) / 100
+  }
 
   const handleDateSelect = () => {
     Taro.showActionSheet({
@@ -42,14 +80,21 @@ const BookingPage: React.FC = () => {
           dayjs().add(2, 'day').format('YYYY-MM-DD')
         ]
         setSelectedDate(dates[res.tapIndex])
-        setSelectedSlot(null)
+        setSelectedStartSlot(null)
+        setSelectedEndSlot(null)
       }
     })
   }
 
-  const handleSlotSelect = (slot: typeof timeSlots[0]) => {
+  const handleStartSlotSelect = (slot: typeof timeSlots[0]) => {
     if (!slot.available) return
-    setSelectedSlot(slot.start)
+    setSelectedStartSlot(slot.start)
+    setSelectedEndSlot(null)
+  }
+
+  const handleEndSlotSelect = (slot: typeof timeSlots[0]) => {
+    if (!slot.available) return
+    setSelectedEndSlot(slot.start)
   }
 
   const handleParkingSelect = () => {
@@ -61,17 +106,57 @@ const BookingPage: React.FC = () => {
     })
   }
 
+  const handleVehicleSelect = () => {
+    if (vehicles.length === 0) {
+      Taro.showModal({
+        title: '提示',
+        content: '您还没有添加车辆，请先添加车辆',
+        confirmText: '去添加',
+        success: res => {
+          if (res.confirm) {
+            Taro.navigateTo({ url: '/pages/vehicle-edit/index' })
+          }
+        }
+      })
+      return
+    }
+    Taro.showActionSheet({
+      itemList: vehicles.map(v => `${v.plateNumber}${v.isDefault ? ' (默认)' : ''}`),
+      success: res => {
+        setSelectedVehicleId(vehicles[res.tapIndex].id)
+      }
+    })
+  }
+
   const handleSubmitBooking = () => {
     if (!selectedParkingId) {
       Taro.showToast({ title: '请选择停车场', icon: 'none' })
       return
     }
-    if (!selectedSlot) {
-      Taro.showToast({ title: '请选择预约时段', icon: 'none' })
+    if (!selectedStartSlot) {
+      Taro.showToast({ title: '请选择开始时间', icon: 'none' })
       return
     }
+    if (!selectedEndSlot) {
+      Taro.showToast({ title: '请选择结束时间', icon: 'none' })
+      return
+    }
+    if (!selectedVehicle) {
+      Taro.showToast({ title: '请选择车辆', icon: 'none' })
+      return
+    }
+    const start = dayjs(`${selectedDate} ${selectedStartSlot}`)
+    const end = dayjs(`${selectedDate} ${selectedEndSlot}`)
+    if (end.diff(start, 'minute') <= 0) {
+      Taro.showToast({ title: '结束时间必须晚于开始时间', icon: 'none' })
+      return
+    }
+
+    const duration = calculateDuration()
+    const price = calculatePrice()
+
     Taro.navigateTo({
-      url: `/pages/booking-confirm/index?parkingId=${selectedParkingId}&date=${selectedDate}&slot=${selectedSlot}`
+      url: `/pages/booking-confirm/index?parkingId=${selectedParkingId}&date=${selectedDate}&startSlot=${selectedStartSlot}&endSlot=${selectedEndSlot}&vehicleId=${selectedVehicle.id}&duration=${duration}&price=${price}`
     })
   }
 
@@ -128,28 +213,29 @@ const BookingPage: React.FC = () => {
         {activeTab === 'new' ? (
           <View className={styles.newBooking}>
             <Text className={styles.bookingTitle}>选择停车场</Text>
-            <View className={styles.dateSelector} onClick={handleParkingSelect}>
-              <Text className={styles.dateIcon}>🅿️</Text>
-              <Text className={styles.dateText}>
+            <View className={styles.selector} onClick={handleParkingSelect}>
+              <Text className={styles.selectorIcon}>🅿️</Text>
+              <Text className={styles.selectorText}>
                 {selectedParking ? selectedParking.name : '请选择停车场'}
               </Text>
-              <Text className={styles.dateArrow}>▼</Text>
+              <Text className={styles.selectorArrow}>▼</Text>
             </View>
             {selectedParking && (
-              <Text className={styles.selectedParkingInfo}>
+              <Text className={styles.selectedInfo}>
                 📍 {selectedParking.address} · 剩余 {selectedParking.availableSpaces} 位
               </Text>
             )}
 
-            <Text className={styles.bookingTitle}>选择预约时间</Text>
-            <View className={styles.dateSelector} onClick={handleDateSelect}>
-              <Text className={styles.dateIcon}>📅</Text>
-              <Text className={styles.dateText}>
+            <Text className={styles.bookingTitle}>选择预约日期</Text>
+            <View className={styles.selector} onClick={handleDateSelect}>
+              <Text className={styles.selectorIcon}>📅</Text>
+              <Text className={styles.selectorText}>
                 {dayjs(selectedDate).format('YYYY年MM月DD日')}
               </Text>
-              <Text className={styles.dateArrow}>▼</Text>
+              <Text className={styles.selectorArrow}>▼</Text>
             </View>
 
+            <Text className={styles.bookingTitle}>选择开始时段</Text>
             <View className={styles.timeSlots}>
               {timeSlots.map((slot, index) => (
                 <View
@@ -157,19 +243,64 @@ const BookingPage: React.FC = () => {
                   className={classnames(
                     styles.slotItem,
                     !slot.available && styles.slotUnavailable,
-                    selectedSlot === slot.start && styles.slotSelected
+                    selectedStartSlot === slot.start && styles.slotSelected
                   )}
-                  onClick={() => handleSlotSelect(slot)}
+                  onClick={() => handleStartSlotSelect(slot)}
                 >
-                  <Text className={styles.slotTime}>
-                    {slot.start}-{slot.end}
-                  </Text>
+                  <Text className={styles.slotTime}>{slot.start}</Text>
                   <Text className={styles.slotPrice}>
-                    {slot.available ? `${formatPrice(slot.price)}` : '已约满'}
+                    {slot.available ? `${formatPrice(slot.price)}/时` : '已约满'}
                   </Text>
                 </View>
               ))}
             </View>
+
+            {selectedStartSlot && (
+              <>
+                <Text className={styles.bookingTitle}>选择结束时段</Text>
+                <View className={styles.timeSlots}>
+                  {endSlotOptions.map((slot, index) => (
+                    <View
+                      key={index}
+                      className={classnames(
+                        styles.slotItem,
+                        !slot.available && styles.slotUnavailable,
+                        selectedEndSlot === slot.start && styles.slotSelected
+                      )}
+                      onClick={() => handleEndSlotSelect(slot)}
+                    >
+                      <Text className={styles.slotTime}>{slot.start}</Text>
+                      <Text className={styles.slotPrice}>
+                        {slot.available ? '可选' : '已约满'}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </>
+            )}
+
+            <Text className={styles.bookingTitle}>选择车牌</Text>
+            <View className={styles.selector} onClick={handleVehicleSelect}>
+              <Text className={styles.selectorIcon}>🚗</Text>
+              <Text className={styles.selectorText}>
+                {selectedVehicle ? selectedVehicle.plateNumber : '请选择车辆'}
+              </Text>
+              <Text className={styles.selectorArrow}>▼</Text>
+            </View>
+
+            {selectedStartSlot && selectedEndSlot && selectedParking && (
+              <View className={styles.summaryCard}>
+                <Text className={styles.summaryTitle}>预约信息</Text>
+                <View className={styles.summaryRow}>
+                  <Text className={styles.summaryLabel}>停车时长</Text>
+                  <Text className={styles.summaryValue}>{calculateDuration()}小时</Text>
+                </View>
+                <View className={styles.summaryRow}>
+                  <Text className={styles.summaryLabel}>预计费用</Text>
+                  <Text className={styles.summaryPrice}>{formatPrice(calculatePrice())}</Text>
+                </View>
+              </View>
+            )}
 
             <View className={styles.quickButton} onClick={handleSubmitBooking}>
               确认预约信息

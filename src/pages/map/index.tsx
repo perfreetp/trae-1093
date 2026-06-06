@@ -31,7 +31,10 @@ const MapPage: React.FC = () => {
     })
   }
 
-  const handleNavigate = (id: string) => {
+  const handleNavigate = (id: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation()
+    }
     Taro.navigateTo({
       url: `/pages/navigation/index?parkingId=${id}`
     })
@@ -104,9 +107,11 @@ const MapPage: React.FC = () => {
                     {' · '}
                     {formatDistance(parking.distance)}
                   </Text>
-                  <View>
-                    <Text className={styles.itemPrice}>{formatPrice(parking.pricePerHour)}</Text>
-                    <Text className={styles.itemPriceUnit}>/小时</Text>
+                  <View className={styles.itemRight}>
+                    <View className={styles.navBtn} onClick={(e) => handleNavigate(parking.id, e)}>
+                      <Text>🧭</Text>
+                      <Text>导航</Text>
+                    </View>
                   </View>
                 </View>
               </View>

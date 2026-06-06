@@ -2,6 +2,7 @@ export interface ParkingLot {
   id: string
   name: string
   address: string
+  entranceAddress: string
   distance: number
   totalSpaces: number
   availableSpaces: number

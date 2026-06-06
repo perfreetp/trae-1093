@@ -210,3 +210,20 @@
   color: $color-text-tertiary;
   font-weight: $font-weight-normal;
 }
+
+.itemRight {
+  display: flex;
+  align-items: center;
+}
+
+.navBtn {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: $spacing-xs $spacing-sm;
+  background: $color-primary-bg;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}

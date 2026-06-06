@@ -17,6 +17,19 @@ const ScanEntryPage: React.FC = () => {
   const randomParking = parkingLots[Math.floor(Math.random() * parkingLots.filter(p => p.availableSpaces > 0).length)]
 
   const handleMockScan = () => {
+    if (vehicles.length === 0) {
+      Taro.showModal({
+        title: '提示',
+        content: '您还没有添加车辆，请先添加车辆后再扫码进场',
+        confirmText: '去添加',
+        success: res => {
+          if (res.confirm) {
+            Taro.navigateTo({ url: '/pages/vehicle-edit/index' })
+          }
+        }
+      })
+      return
+    }
     Taro.showLoading({ title: '识别中...' })
     setTimeout(() => {
       Taro.hideLoading()

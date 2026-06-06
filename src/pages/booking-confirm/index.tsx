@@ -9,7 +9,7 @@ import styles from './index.module.scss'
 
 const BookingConfirmPage: React.FC = () => {
   const router = useRouter()
-  const { parkingId, date, slot } = router.params
+  const { parkingId, date, startSlot, endSlot, vehicleId, duration, price } = router.params
   const addBooking = useAppStore(state => state.addBooking)
   const vehicles = useAppStore(state => state.vehicles)
 
@@ -18,31 +18,31 @@ const BookingConfirmPage: React.FC = () => {
     [parkingId]
   )
 
-  const defaultVehicle = useMemo(
-    () => vehicles.find(v => v.isDefault) || vehicles[0],
-    [vehicles]
+  const selectedVehicle = useMemo(
+    () => vehicles.find(v => v.id === vehicleId) || vehicles.find(v => v.isDefault) || vehicles[0],
+    [vehicles, vehicleId]
   )
 
-  const startTime = slot || '09:00'
-  const endTime = useMemo(() => {
-    const [hour, minute] = startTime.split(':').map(Number)
-    return `${String(hour + 2).padStart(2, '0')}:${minute}`
-  }, [startTime])
-
-  const duration = 2
-  const price = parking.pricePerHour * duration
+  const startTime = startSlot || '09:00'
+  const endTime = endSlot || '11:00'
+  const bookingDuration = duration ? parseFloat(duration) : 2
+  const bookingPrice = price ? parseFloat(price) : parking.pricePerHour * bookingDuration
 
   const handleSubmit = () => {
+    if (!selectedVehicle) {
+      Taro.showToast({ title: '请先添加车辆', icon: 'none' })
+      return
+    }
     const newBooking = {
       id: `booking_${Date.now()}`,
       parkingLotId: parking.id,
       parkingLotName: parking.name,
       parkingLotAddress: parking.address,
-      plateNumber: defaultVehicle?.plateNumber || '京A12345',
+      plateNumber: selectedVehicle.plateNumber,
       startTime: `${date} ${startTime}`,
       endTime: `${date} ${endTime}`,
-      duration,
-      price,
+      duration: bookingDuration,
+      price: bookingPrice,
       status: 'confirmed' as const,
       createTime: dayjs().format('YYYY-MM-DD HH:mm')
     }
@@ -50,7 +50,7 @@ const BookingConfirmPage: React.FC = () => {
     addBooking(newBooking)
     Taro.showToast({ title: '预约成功', icon: 'success' })
     setTimeout(() => {
-      Taro.switchTab({ url: '/pages/booking/index' })
+      Taro.switchTab({ url: '/pages/booking/index?tab=my' })
     }, 1500)
   }
 
@@ -87,12 +87,12 @@ const BookingConfirmPage: React.FC = () => {
             </View>
             <View className={styles.infoRow}>
               <Text className={styles.infoLabel}>停车时长</Text>
-              <Text className={styles.infoValue}>{duration} 小时</Text>
+              <Text className={styles.infoValue}>{bookingDuration} 小时</Text>
             </View>
             <View className={styles.infoRow}>
               <Text className={styles.infoLabel}>车牌号码</Text>
               <Text className={styles.infoValue}>
-                {defaultVehicle ? formatPlateNumber(defaultVehicle.plateNumber) : '--'}
+                {selectedVehicle ? formatPlateNumber(selectedVehicle.plateNumber) : '--'}
               </Text>
             </View>
           </View>
@@ -107,12 +107,12 @@ const BookingConfirmPage: React.FC = () => {
             </View>
             <View className={styles.infoRow}>
               <Text className={styles.infoLabel}>时长</Text>
-              <Text className={styles.infoValue}>{duration} 小时</Text>
+              <Text className={styles.infoValue}>{bookingDuration} 小时</Text>
             </View>
             <View className={styles.divider} />
             <View className={styles.infoRow}>
               <Text className={styles.infoLabel}>预计费用</Text>
-              <Text className={styles.priceValue}>{formatPrice(price)}</Text>
+              <Text className={styles.priceValue}>{formatPrice(bookingPrice)}</Text>
             </View>
           </View>
         </View>
@@ -127,7 +127,7 @@ const BookingConfirmPage: React.FC = () => {
       <View className={styles.bottomBar}>
         <View>
           <Text className={styles.totalPrice}>预计费用</Text>
-          <Text className={styles.priceValue}>{formatPrice(price)}</Text>
+          <Text className={styles.priceValue}>{formatPrice(bookingPrice)}</Text>
         </View>
         <View className={styles.submitBtn} onClick={handleSubmit}>
           确认预约

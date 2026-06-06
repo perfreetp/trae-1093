@@ -98,6 +98,11 @@
   color: $color-text-white;
 }
 
+.warningAction {
+  background: rgba(255, 125, 0, 0.9);
+  color: $color-text-white;
+}
+
 .tabs {
   display: flex;
   background: $color-bg-card;

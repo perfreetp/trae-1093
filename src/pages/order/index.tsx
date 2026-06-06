@@ -53,6 +53,12 @@ const OrderPage: React.FC = () => {
     Taro.showToast({ title: '导航功能开发中', icon: 'none' })
   }
 
+  const handleSettle = (orderId: string) => {
+    Taro.navigateTo({
+      url: `/pages/parking-settle/index?orderId=${orderId}`
+    })
+  }
+
   const handleOrderClick = (order: ParkingOrder) => {
     if (order.status === 'pending_payment' || order.status === 'overdue') {
       handlePay(order)
@@ -104,10 +110,16 @@ const OrderPage: React.FC = () => {
               找车
             </View>
             <View
-              className={classnames(styles.actionBtn, styles.primaryAction)}
+              className={classnames(styles.actionBtn, styles.warningAction)}
               onClick={handleNavigate}
             >
               导航到出口
+            </View>
+            <View
+              className={classnames(styles.actionBtn, styles.primaryAction)}
+              onClick={() => handleSettle(currentParking.id)}
+            >
+              去结算
             </View>
           </View>
         </View>

@@ -16,7 +16,8 @@ const PaymentPage: React.FC = () => {
   const router = useRouter()
   const { orderId } = router.params
   const [selectedMethod, setSelectedMethod] = useState('wechat')
-  const { orders, updateOrderStatus } = useAppStore()
+  const [selectedCouponId, setSelectedCouponId] = useState<string | null>(null)
+  const { orders, updateOrderStatus, coupons, useCoupon } = useAppStore()
 
   const order = useMemo(() => {
     if (orderId) {
@@ -27,8 +28,55 @@ const PaymentPage: React.FC = () => {
 
   const payableAmount = order ? order.totalAmount - order.paidAmount : 0
 
+  const availableCoupons = useMemo(() => {
+    return coupons.filter(c => {
+      if (c.status !== 'available') return false
+      if (c.minAmount > 0 && payableAmount < c.minAmount) return false
+      return true
+    })
+  }, [coupons, payableAmount])
+
+  const selectedCoupon = useMemo(
+    () => coupons.find(c => c.id === selectedCouponId && c.status === 'available'),
+    [coupons, selectedCouponId]
+  )
+
+  const discountAmount = useMemo(() => {
+    if (!selectedCoupon) return 0
+    if (selectedCoupon.type === 'amount') {
+      return selectedCoupon.value
+    }
+    return Math.ceil(payableAmount * (1 - selectedCoupon.value) * 100) / 100
+  }, [selectedCoupon, payableAmount])
+
+  const actualPayAmount = useMemo(() => {
+    return Math.max(0, Math.ceil((payableAmount - discountAmount) * 100) / 100)
+  }, [payableAmount, discountAmount])
+
+  const handleCouponSelect = () => {
+    if (availableCoupons.length === 0) {
+      Taro.showToast({ title: '暂无可用优惠券', icon: 'none' })
+      return
+    }
+    Taro.showActionSheet({
+      itemList: availableCoupons.map(c => {
+        if (c.type === 'amount') {
+          return `${c.name} - 减¥${c.value}`
+        }
+        return `${c.name} - ${c.value * 10}折`
+      }),
+      success: res => {
+        setSelectedCouponId(availableCoupons[res.tapIndex].id)
+      }
+    })
+  }
+
   const handlePay = () => {
     if (!order) return
+
+    if (selectedCoupon) {
+      useCoupon(selectedCoupon.id)
+    }
 
     Taro.showLoading({ title: '支付中...' })
     setTimeout(() => {
@@ -54,8 +102,11 @@ const PaymentPage: React.FC = () => {
   return (
     <View className={styles.page}>
       <View className={styles.amountSection}>
-        <Text className={styles.amountLabel}>停车费用</Text>
-        <Text className={styles.amountValue}>{formatPrice(payableAmount)}</Text>
+        <Text className={styles.amountLabel}>应付金额</Text>
+        <Text className={styles.amountValue}>{formatPrice(actualPayAmount)}</Text>
+        {discountAmount > 0 && (
+          <Text className={styles.amountDiscount}>已优惠 {formatPrice(discountAmount)}</Text>
+        )}
       </View>
 
       <View className={styles.orderInfo}>
@@ -83,6 +134,29 @@ const PaymentPage: React.FC = () => {
             {order.duration ? formatDuration(order.duration) : '--'}
           </Text>
         </View>
+      </View>
+
+      <View className={styles.couponSection}>
+        <View className={styles.couponRow} onClick={handleCouponSelect}>
+          <Text className={styles.couponLabel}>
+            <Text>🎫</Text> 优惠券
+          </Text>
+          <View className={styles.couponRight}>
+            {selectedCoupon ? (
+              <Text className={styles.couponSelected}>
+                {selectedCoupon.type === 'amount' ? `-¥${selectedCoupon.value}` : `-${(selectedCoupon.value * 10).toFixed(0)}折`}
+              </Text>
+            ) : (
+              <Text className={styles.couponPlaceholder}>
+                {availableCoupons.length > 0 ? `${availableCoupons.length}张可用` : '暂无可用'}
+              </Text>
+            )}
+            <Text className={styles.couponArrow}>›</Text>
+          </View>
+        </View>
+      </View>
+
+      <View className={styles.orderInfo}>
         <View className={styles.infoRow}>
           <Text className={styles.infoLabel}>订单金额</Text>
           <Text className={styles.infoValue}>{formatPrice(order.totalAmount)}</Text>
@@ -91,6 +165,12 @@ const PaymentPage: React.FC = () => {
           <View className={styles.infoRow}>
             <Text className={styles.infoLabel}>已付金额</Text>
             <Text className={styles.infoValue}>{formatPrice(order.paidAmount)}</Text>
+          </View>
+        )}
+        {discountAmount > 0 && (
+          <View className={styles.infoRow}>
+            <Text className={styles.infoLabel}>优惠券抵扣</Text>
+            <Text className={styles.infoValue} style={{ color: '#00B42A' }}>-{formatPrice(discountAmount)}</Text>
           </View>
         )}
       </View>
@@ -117,7 +197,7 @@ const PaymentPage: React.FC = () => {
 
       <View className={styles.bottomBar}>
         <View className={styles.payBtn} onClick={handlePay}>
-          确认支付 {formatPrice(payableAmount)}
+          确认支付 {formatPrice(actualPayAmount)}
         </View>
       </View>
     </View>
