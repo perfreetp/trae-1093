@@ -4,7 +4,7 @@ import Taro from '@tarojs/taro'
 import classnames from 'classnames'
 import StatusTag from '@/components/StatusTag'
 import EmptyState from '@/components/EmptyState'
-import { arrearsOrders } from '@/data/order'
+import { useAppStore } from '@/store'
 import type { ParkingOrder } from '@/types/order'
 import { formatDuration, formatPrice, formatPlateNumber } from '@/utils/format'
 import styles from './index.module.scss'
@@ -18,6 +18,12 @@ const tabs = [
 const ArrearsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('all')
   const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const orders = useAppStore(state => state.orders)
+
+  const arrearsOrders = useMemo(
+    () => orders.filter(o => o.status === 'overdue' || o.status === 'pending_payment'),
+    [orders]
+  )
 
   const filteredOrders = useMemo(() => {
     switch (activeTab) {
@@ -28,7 +34,7 @@ const ArrearsPage: React.FC = () => {
       default:
         return arrearsOrders
     }
-  }, [activeTab])
+  }, [activeTab, arrearsOrders])
 
   const totalAmount = useMemo(() => {
     return filteredOrders

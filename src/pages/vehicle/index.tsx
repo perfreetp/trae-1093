@@ -1,26 +1,22 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { View, Text, ScrollView } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import classnames from 'classnames'
-import { myVehicles } from '@/data/user'
-import type { Vehicle } from '@/types/user'
+import { useAppStore } from '@/store'
 import styles from './index.module.scss'
 
 const VehiclePage: React.FC = () => {
-  const [vehicles, setVehicles] = useState<Vehicle[]>(myVehicles)
+  const { vehicles, setDefaultVehicle, deleteVehicle } = useAppStore()
 
   const handleSetDefault = (id: string) => {
-    setVehicles(prev =>
-      prev.map(v => ({
-        ...v,
-        isDefault: v.id === id
-      }))
-    )
+    setDefaultVehicle(id)
     Taro.showToast({ title: '已设为默认', icon: 'success' })
   }
 
   const handleEdit = (id: string) => {
-    Taro.showToast({ title: '编辑功能开发中', icon: 'none' })
+    Taro.navigateTo({
+      url: `/pages/vehicle-edit/index?id=${id}`
+    })
   }
 
   const handleDelete = (id: string) => {
@@ -29,7 +25,7 @@ const VehiclePage: React.FC = () => {
       content: '确定要删除这个车辆吗？',
       success: res => {
         if (res.confirm) {
-          setVehicles(prev => prev.filter(v => v.id !== id))
+          deleteVehicle(id)
           Taro.showToast({ title: '已删除', icon: 'success' })
         }
       }
@@ -37,7 +33,7 @@ const VehiclePage: React.FC = () => {
   }
 
   const handleAdd = () => {
-    Taro.showToast({ title: '添加车辆功能开发中', icon: 'none' })
+    Taro.navigateTo({ url: '/pages/vehicle-edit/index' })
   }
 
   return (

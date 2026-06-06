@@ -15,7 +15,11 @@ export default defineAppConfig({
     'pages/invoice/index',
     'pages/find-car/index',
     'pages/arrears/index',
-    'pages/favorites/index'
+    'pages/favorites/index',
+    'pages/scan-entry/index',
+    'pages/navigation/index',
+    'pages/vehicle-edit/index',
+    'pages/invoice-edit/index'
   ],
   window: {
     backgroundTextStyle: 'light',

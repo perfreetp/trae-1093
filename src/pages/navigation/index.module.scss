@@ -1,0 +1,213 @@
+.page {
+  min-height: 100vh;
+  background: #F5F7FA;
+}
+
+.mapArea {
+  height: 500rpx;
+  background: linear-gradient(135deg, #1677FF 0%, #0958D9 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.mapPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.mapIcon {
+  font-size: 100rpx;
+  margin-bottom: 16rpx;
+}
+
+.mapText {
+  font-size: 28rpx;
+  opacity: 0.9;
+}
+
+.routeLine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.routePath {
+  width: 80%;
+  height: 8rpx;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4rpx;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 24rpx;
+    height: 24rpx;
+    background: #4ECDC4;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 0 8rpx rgba(78, 205, 196, 0.3);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 24rpx;
+    height: 24rpx;
+    background: #FF6B6B;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 0 8rpx rgba(255, 107, 107, 0.3);
+  }
+}
+
+.infoCard {
+  background: #fff;
+  margin: -40rpx 24rpx 24rpx;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 10;
+}
+
+.parkingName {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #1D2129;
+  margin-bottom: 12rpx;
+}
+
+.parkingAddress {
+  font-size: 26rpx;
+  color: #86909C;
+  margin-bottom: 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.routeInfo {
+  display: flex;
+  background: #F7F8FA;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.routeItem {
+  flex: 1;
+  text-align: center;
+  border-right: 1rpx solid #E5E6EB;
+
+  &:last-child {
+    border-right: none;
+  }
+}
+
+.routeValue {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1677FF;
+  margin-bottom: 8rpx;
+}
+
+.routeLabel {
+  font-size: 24rpx;
+  color: #86909C;
+}
+
+.tips {
+  background: #E6F7FF;
+  border-radius: 12rpx;
+  padding: 20rpx;
+}
+
+.tipsTitle {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1677FF;
+  margin-bottom: 12rpx;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.tipsItem {
+  font-size: 26rpx;
+  color: #4E5969;
+  line-height: 1.8;
+  padding-left: 8rpx;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 24rpx;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 20rpx;
+}
+
+.secondaryBtn {
+  flex: 1;
+  background: #F2F3F5;
+  color: #4E5969;
+  text-align: center;
+  padding: 28rpx;
+  border-radius: 48rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.primaryBtn {
+  flex: 2;
+  background: linear-gradient(135deg, #1677FF 0%, #0958D9 100%);
+  color: #fff;
+  text-align: center;
+  padding: 28rpx;
+  border-radius: 48rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+
+  &.navigating {
+    background: linear-gradient(135deg, #00B42A 0%, #009A29 100%);
+  }
+}
+
+.navigatingStatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+}
+
+.navDot {
+  width: 16rpx;
+  height: 16rpx;
+  background: #fff;
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}

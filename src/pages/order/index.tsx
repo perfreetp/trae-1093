@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { View, Text, ScrollView } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import classnames from 'classnames'
 import StatusTag from '@/components/StatusTag'
 import EmptyState from '@/components/EmptyState'
-import { myOrders } from '@/data/order'
+import { useAppStore } from '@/store'
 import type { ParkingOrder } from '@/types/order'
 import { formatDuration, formatPrice, formatPlateNumber } from '@/utils/format'
 import styles from './index.module.scss'
@@ -17,8 +17,8 @@ const tabs = [
 ]
 
 const OrderPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('all')
-  const [orders, setOrders] = useState<ParkingOrder[]>(myOrders)
+  const [activeTab, setActiveTab] = React.useState('all')
+  const orders = useAppStore(state => state.orders)
 
   const currentParking = useMemo(
     () => orders.find(o => o.status === 'parking'),

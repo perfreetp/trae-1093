@@ -78,6 +78,14 @@
   font-size: $font-size-md;
 }
 
+.selectedParkingInfo {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-top: -$spacing-md;
+  margin-bottom: $spacing-lg;
+  padding-left: $spacing-sm;
+}
+
 .timeSlots {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

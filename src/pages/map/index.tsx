@@ -31,12 +31,14 @@ const MapPage: React.FC = () => {
     })
   }
 
-  const handleNavigate = () => {
-    Taro.showToast({ title: '导航功能开发中', icon: 'none' })
+  const handleNavigate = (id: string) => {
+    Taro.navigateTo({
+      url: `/pages/navigation/index?parkingId=${id}`
+    })
   }
 
   const handleScan = () => {
-    Taro.showToast({ title: '扫码功能开发中', icon: 'none' })
+    Taro.navigateTo({ url: '/pages/scan-entry/index' })
   }
 
   const handleLocate = () => {

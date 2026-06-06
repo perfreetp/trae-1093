@@ -18,11 +18,67 @@
   box-shadow: $shadow-card;
 }
 
+.section {
+  margin-bottom: $spacing-lg;
+}
+
 .sectionTitle {
   font-size: $font-size-lg;
   font-weight: $font-weight-semibold;
   color: $color-text-primary;
   margin-bottom: $spacing-md;
+}
+
+.infoCard {
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.parkingName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-sm;
+}
+
+.parkingAddress {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-md;
+}
+
+.parkingTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.tag {
+  background: $color-primary-bg;
+  color: $color-primary;
+  padding: 4rpx $spacing-sm;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+}
+
+.divider {
+  height: 1rpx;
+  background: $color-divider;
+  margin: $spacing-sm 0;
+}
+
+.tips {
+  background: #E6F7FF;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+}
+
+.tipsText {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  line-height: 1.6;
 }
 
 .infoRow {

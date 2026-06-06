@@ -1,26 +1,22 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { View, Text, ScrollView } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import classnames from 'classnames'
-import { myInvoices } from '@/data/user'
-import type { Invoice } from '@/types/user'
+import { useAppStore } from '@/store'
 import styles from './index.module.scss'
 
 const InvoicePage: React.FC = () => {
-  const [invoices, setInvoices] = useState<Invoice[]>(myInvoices)
+  const { invoices, setDefaultInvoice, deleteInvoice } = useAppStore()
 
   const handleSetDefault = (id: string) => {
-    setInvoices(prev =>
-      prev.map(inv => ({
-        ...inv,
-        isDefault: inv.id === id
-      }))
-    )
+    setDefaultInvoice(id)
     Taro.showToast({ title: '已设为默认', icon: 'success' })
   }
 
   const handleEdit = (id: string) => {
-    Taro.showToast({ title: '编辑功能开发中', icon: 'none' })
+    Taro.navigateTo({
+      url: `/pages/invoice-edit/index?id=${id}`
+    })
   }
 
   const handleDelete = (id: string) => {
@@ -29,7 +25,7 @@ const InvoicePage: React.FC = () => {
       content: '确定要删除这个发票抬头吗？',
       success: res => {
         if (res.confirm) {
-          setInvoices(prev => prev.filter(inv => inv.id !== id))
+          deleteInvoice(id)
           Taro.showToast({ title: '已删除', icon: 'success' })
         }
       }
@@ -37,7 +33,7 @@ const InvoicePage: React.FC = () => {
   }
 
   const handleAdd = () => {
-    Taro.showToast({ title: '添加功能开发中', icon: 'none' })
+    Taro.navigateTo({ url: '/pages/invoice-edit/index' })
   }
 
   const typeTextMap: Record<string, string> = {

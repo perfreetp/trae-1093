@@ -19,7 +19,9 @@ const ParkingDetailPage: React.FC = () => {
   ]
 
   const handleNavigate = () => {
-    Taro.showToast({ title: '导航功能开发中', icon: 'none' })
+    Taro.navigateTo({
+      url: `/pages/navigation/index?parkingId=${parking.id}`
+    })
   }
 
   const handleBooking = () => {

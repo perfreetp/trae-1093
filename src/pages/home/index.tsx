@@ -5,13 +5,13 @@ import classnames from 'classnames'
 import ParkingCard from '@/components/ParkingCard'
 import SectionHeader from '@/components/SectionHeader'
 import { parkingLots } from '@/data/parking'
-import { currentParking as mockCurrentParking } from '@/data/order'
+import { useAppStore } from '@/store'
 import type { ParkingLot } from '@/types/parking'
 import { formatDuration } from '@/utils/format'
 import styles from './index.module.scss'
 
 const quickActions = [
-  { icon: '📷', text: '扫码进场', path: '' },
+  { icon: '📷', text: '扫码进场', path: '/pages/scan-entry/index' },
   { icon: '📅', text: '预约车位', path: '/pages/booking/index' },
   { icon: '💳', text: '月卡购买', path: '/pages/monthly-card/index' },
   { icon: '🚗', text: '车辆管理', path: '/pages/vehicle/index' }
@@ -28,12 +28,13 @@ const filterOptions = [
 const HomePage: React.FC = () => {
   const [searchText, setSearchText] = useState('')
   const [activeFilter, setActiveFilter] = useState('all')
-  const [currentParking, setCurrentParking] = useState(mockCurrentParking)
   const [parkingData, setParkingData] = useState<ParkingLot[]>(parkingLots)
+  const orders = useAppStore(state => state.orders)
 
-  useDidShow(() => {
-    setCurrentParking(mockCurrentParking)
-  })
+  const currentParking = useMemo(
+    () => orders.find(o => o.status === 'parking'),
+    [orders]
+  )
 
   const filteredParking = useMemo(() => {
     let result = [...parkingData]
@@ -69,8 +70,6 @@ const HomePage: React.FC = () => {
       } else {
         Taro.navigateTo({ url: action.path })
       }
-    } else {
-      Taro.showToast({ title: '扫码功能开发中', icon: 'none' })
     }
   }
 

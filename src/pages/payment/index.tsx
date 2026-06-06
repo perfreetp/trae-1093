@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { View, Text } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useRouter } from '@tarojs/taro'
 import classnames from 'classnames'
-import { formatPrice, formatDuration } from '@/utils/format'
-import { myOrders } from '@/data/order'
+import { formatPrice, formatDuration, formatPlateNumber } from '@/utils/format'
+import { useAppStore } from '@/store'
 import styles from './index.module.scss'
 
 const payMethods = [
@@ -13,13 +13,27 @@ const payMethods = [
 ]
 
 const PaymentPage: React.FC = () => {
+  const router = useRouter()
+  const { orderId } = router.params
   const [selectedMethod, setSelectedMethod] = useState('wechat')
-  const order = myOrders.find(o => o.status === 'pending_payment') || myOrders[2]
+  const { orders, updateOrderStatus } = useAppStore()
+
+  const order = useMemo(() => {
+    if (orderId) {
+      return orders.find(o => o.id === orderId)
+    }
+    return orders.find(o => o.status === 'pending_payment' || o.status === 'overdue') || orders[2]
+  }, [orderId, orders])
+
+  const payableAmount = order ? order.totalAmount - order.paidAmount : 0
 
   const handlePay = () => {
+    if (!order) return
+
     Taro.showLoading({ title: '支付中...' })
     setTimeout(() => {
       Taro.hideLoading()
+      updateOrderStatus(order.id, 'completed')
       Taro.showToast({ title: '支付成功', icon: 'success' })
       setTimeout(() => {
         Taro.navigateBack()
@@ -27,11 +41,21 @@ const PaymentPage: React.FC = () => {
     }, 1500)
   }
 
+  if (!order) {
+    return (
+      <View className={styles.page}>
+        <View className={styles.empty}>
+          <Text>订单不存在</Text>
+        </View>
+      </View>
+    )
+  }
+
   return (
     <View className={styles.page}>
       <View className={styles.amountSection}>
         <Text className={styles.amountLabel}>停车费用</Text>
-        <Text className={styles.amountValue}>{formatPrice(order.totalAmount)}</Text>
+        <Text className={styles.amountValue}>{formatPrice(payableAmount)}</Text>
       </View>
 
       <View className={styles.orderInfo}>
@@ -41,18 +65,34 @@ const PaymentPage: React.FC = () => {
         </View>
         <View className={styles.infoRow}>
           <Text className={styles.infoLabel}>车牌号码</Text>
-          <Text className={styles.infoValue}>{order.plateNumber}</Text>
+          <Text className={styles.infoValue}>{formatPlateNumber(order.plateNumber)}</Text>
         </View>
         <View className={styles.infoRow}>
           <Text className={styles.infoLabel}>入场时间</Text>
           <Text className={styles.infoValue}>{order.entryTime}</Text>
         </View>
+        {order.exitTime && (
+          <View className={styles.infoRow}>
+            <Text className={styles.infoLabel}>出场时间</Text>
+            <Text className={styles.infoValue}>{order.exitTime}</Text>
+          </View>
+        )}
         <View className={styles.infoRow}>
           <Text className={styles.infoLabel}>停车时长</Text>
           <Text className={styles.infoValue}>
             {order.duration ? formatDuration(order.duration) : '--'}
           </Text>
         </View>
+        <View className={styles.infoRow}>
+          <Text className={styles.infoLabel}>订单金额</Text>
+          <Text className={styles.infoValue}>{formatPrice(order.totalAmount)}</Text>
+        </View>
+        {order.paidAmount > 0 && (
+          <View className={styles.infoRow}>
+            <Text className={styles.infoLabel}>已付金额</Text>
+            <Text className={styles.infoValue}>{formatPrice(order.paidAmount)}</Text>
+          </View>
+        )}
       </View>
 
       <View className={styles.payMethods}>
@@ -77,7 +117,7 @@ const PaymentPage: React.FC = () => {
 
       <View className={styles.bottomBar}>
         <View className={styles.payBtn} onClick={handlePay}>
-          确认支付 {formatPrice(order.totalAmount)}
+          确认支付 {formatPrice(payableAmount)}
         </View>
       </View>
     </View>

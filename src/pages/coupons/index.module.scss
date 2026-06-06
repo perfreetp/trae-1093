@@ -125,6 +125,25 @@
   font-size: $font-size-sm;
 }
 
+.claimBtn {
+  padding: $spacing-xs $spacing-md;
+  background: linear-gradient(135deg, #FF7D00 0%, #FF9A2E 100%);
+  color: $color-text-white;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.usedTag {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.expiredTag {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
 .usedCoupon {
   opacity: 0.6;
 

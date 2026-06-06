@@ -4,7 +4,9 @@ import Taro from '@tarojs/taro'
 import classnames from 'classnames'
 import StatusTag from '@/components/StatusTag'
 import EmptyState from '@/components/EmptyState'
-import { myBookings, generateTimeSlots } from '@/data/booking'
+import { generateTimeSlots } from '@/data/booking'
+import { parkingLots } from '@/data/parking'
+import { useAppStore } from '@/store'
 import { formatPrice } from '@/utils/format'
 import dayjs from 'dayjs'
 import styles from './index.module.scss'
@@ -18,9 +20,13 @@ const BookingPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('new')
   const [selectedDate, setSelectedDate] = useState(dayjs().format('YYYY-MM-DD'))
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null)
-  const [bookings, setBookings] = useState(myBookings)
+  const [selectedParkingId, setSelectedParkingId] = useState<string | null>(null)
+  const { bookings, vehicles, cancelBooking } = useAppStore()
 
   const timeSlots = useMemo(() => generateTimeSlots(selectedDate), [selectedDate])
+  const defaultVehicle = vehicles.find(v => v.isDefault) || vehicles[0]
+  const selectedParking = parkingLots.find(p => p.id === selectedParkingId)
+  const availableParkings = parkingLots.filter(p => p.availableSpaces > 0)
 
   const handleDateSelect = () => {
     Taro.showActionSheet({
@@ -46,13 +52,26 @@ const BookingPage: React.FC = () => {
     setSelectedSlot(slot.start)
   }
 
+  const handleParkingSelect = () => {
+    Taro.showActionSheet({
+      itemList: availableParkings.map(p => p.name),
+      success: res => {
+        setSelectedParkingId(availableParkings[res.tapIndex].id)
+      }
+    })
+  }
+
   const handleSubmitBooking = () => {
+    if (!selectedParkingId) {
+      Taro.showToast({ title: '请选择停车场', icon: 'none' })
+      return
+    }
     if (!selectedSlot) {
       Taro.showToast({ title: '请选择预约时段', icon: 'none' })
       return
     }
     Taro.navigateTo({
-      url: `/pages/booking-confirm/index?date=${selectedDate}&slot=${selectedSlot}`
+      url: `/pages/booking-confirm/index?parkingId=${selectedParkingId}&date=${selectedDate}&slot=${selectedSlot}`
     })
   }
 
@@ -62,9 +81,7 @@ const BookingPage: React.FC = () => {
       content: '确定要取消这个预约吗？',
       success: res => {
         if (res.confirm) {
-          setBookings(prev =>
-            prev.map(b => (b.id === id ? { ...b, status: 'cancelled' as const } : b))
-          )
+          cancelBooking(id)
           Taro.showToast({ title: '已取消', icon: 'success' })
         }
       }
@@ -110,8 +127,21 @@ const BookingPage: React.FC = () => {
       <View className={styles.content}>
         {activeTab === 'new' ? (
           <View className={styles.newBooking}>
-            <Text className={styles.bookingTitle}>选择预约时间</Text>
+            <Text className={styles.bookingTitle}>选择停车场</Text>
+            <View className={styles.dateSelector} onClick={handleParkingSelect}>
+              <Text className={styles.dateIcon}>🅿️</Text>
+              <Text className={styles.dateText}>
+                {selectedParking ? selectedParking.name : '请选择停车场'}
+              </Text>
+              <Text className={styles.dateArrow}>▼</Text>
+            </View>
+            {selectedParking && (
+              <Text className={styles.selectedParkingInfo}>
+                📍 {selectedParking.address} · 剩余 {selectedParking.availableSpaces} 位
+              </Text>
+            )}
 
+            <Text className={styles.bookingTitle}>选择预约时间</Text>
             <View className={styles.dateSelector} onClick={handleDateSelect}>
               <Text className={styles.dateIcon}>📅</Text>
               <Text className={styles.dateText}>
@@ -142,7 +172,7 @@ const BookingPage: React.FC = () => {
             </View>
 
             <View className={styles.quickButton} onClick={handleSubmitBooking}>
-              下一步：选择停车场
+              确认预约信息
             </View>
           </View>
         ) : (
